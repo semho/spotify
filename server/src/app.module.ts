@@ -1,3 +1,4 @@
+import { AlbumModule } from './album/album.module';
 import { FileModule } from './file/file.module';
 import { TrackModule } from './track/track.module';
 /*
@@ -11,6 +12,7 @@ import * as path from 'path';
 
 @Module({
   imports: [
+    AlbumModule,
     ServeStaticModule.forRoot({
       rootPath: path.resolve(__dirname, 'static'),
     }),
