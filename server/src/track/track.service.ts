@@ -83,14 +83,25 @@ export class TrackService {
     return album;
   }
 
-  //TODO: Убарать повторяющиеся, должно быть уникально
-  async attachAlbum(idTrack: ObjectId, idAlbum: ObjectId) {
+  /**
+   * Связь уже сществующего трека с существующим альбомом
+   * @param idTrack
+   * @param idAlbum
+   * @returns Promise<Track>
+   */
+  async attachAlbum(idTrack: ObjectId, idAlbum: ObjectId): Promise<Track> {
     const track = await this.trackModel.findById(idTrack);
     const album = await this.albumModel.findById(idAlbum);
-    album.tracks.push(track);
-    await album.save();
-    track.albums.push(album);
-    await track.save();
+
+    if (!track.albums.includes(album.id)) {
+      track.albums.push(album);
+      await track.save();
+    }
+
+    if (!album.tracks.includes(track.id)) {
+      album.tracks.push(track);
+      await album.save();
+    }
 
     return track;
   }

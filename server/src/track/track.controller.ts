@@ -74,6 +74,12 @@ export class TrackController {
     return this.trackService.addAlbum(dto);
   }
 
+  /**
+   * Связь уже сществующего трека с существующим альбомом
+   * @param idTrack
+   * @param idAlbum
+   * @returns
+   */
   @Get('/:idTrack/:idAlbum')
   attachAlbum(
     @Param('idTrack') idTrack: ObjectId,
