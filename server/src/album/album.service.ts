@@ -53,6 +53,8 @@ export class AlbumService {
   async addTrack(dto: CreateTrackDto): Promise<Track> {
     const album = await this.albumModel.findById(dto.albumId);
     const track = await this.trackModel.create({ ...dto });
+    track.albums.push(album);
+    await track.save();
     album.tracks.push(track);
     await album.save();
     return track;

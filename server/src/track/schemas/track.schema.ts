@@ -28,8 +28,8 @@ export class Track {
   @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }] })
   comments: Comment[];
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Album' })
-  album: Album;
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Album' }] })
+  albums: Album[];
 }
 
 export const TrackSchema = SchemaFactory.createForClass(Track);
