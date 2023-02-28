@@ -16,6 +16,13 @@ export default function TrackPage() {
       "http://127.0.0.1:5000/image/6721b188-d459-4a07-9c48-ec6836225c99.jpg",
     audio:
       "http://127.0.0.1:5000/audio/bd85f2e3-3074-4a11-ac57-9f0031adde4a.mp3",
+    comments: [
+      {
+        _id: "1",
+        username: "Автор 1",
+        text: "text comment",
+      },
+    ],
   };
   const router = useRouter();
 
@@ -39,12 +46,23 @@ export default function TrackPage() {
       <h2>Текст трека</h2>
       <p>{track.text}</p>
       <Divider flexItem className={styles.devider} />
-      <h4>Добавить комментарий</h4>
-      <Grid container>
+      <h4>Комментарии</h4>
+      <Grid container className={styles["second-box"]}>
         <TextField label="Ваше Имя" fullWidth />
         <TextField label="Комментарий" fullWidth multiline rows={4} />
-        <Button variant={"outlined"}>Отправить</Button>
+        <Button variant={"contained"} className={styles.button}>
+          Отправить
+        </Button>
       </Grid>
+      <Divider flexItem className={styles.devider} />
+      <div>
+        {track.comments?.map((comment) => (
+          <div>
+            <div>Автор - {comment.username}</div>
+            <div>Комментарий - {comment.text}</div>
+          </div>
+        ))}
+      </div>
     </MainLayout>
   );
 }
