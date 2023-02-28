@@ -1,20 +1,28 @@
-import Navbar from '@/components/Navbar'
-import { Container } from '@mui/system'
-import React from 'react'
+import Navbar from "@/components/Navbar";
+import { Container } from "@mui/system";
+import React from "react";
 
 interface ILayoutProps {
-    children?: React.ReactNode
+  children?: React.ReactNode;
 }
 
-const MainLayout = ({children}: ILayoutProps) => {
+const MainLayout = ({ children }: ILayoutProps) => {
   return (
     <>
-      <Navbar/>
-      <Container style={{margin: '90px 0'}}>
-        {children}
+      <Navbar />
+      <Container>
+        <div className="main-layout">{children}</div>
       </Container>
-    </>
-  )
-}
 
-export default MainLayout
+      <style jsx>
+        {`
+          .main-layout {
+            margin: 90px 0;
+          }
+        `}
+      </style>
+    </>
+  );
+};
+
+export default MainLayout;

@@ -1,16 +1,16 @@
-import Navbar from '@/components/Navbar'
-import MainLayout from '@/layouts/MainLayout'
-import React from 'react'
+import MainLayout from "@/layouts/MainLayout";
+import React from "react";
 
 export default function index() {
   return (
     <>
       <MainLayout>
-        <div className='center'>
+        <div className="center">
           <h1>Добро пожаловать!</h1>
           <h3>Здесь собраны лучшие треки!</h3>
         </div>
-      </MainLayout>    
+      </MainLayout>
+
       <style jsx>
         {`
           .center {
@@ -23,5 +23,5 @@ export default function index() {
         `}
       </style>
     </>
-  )
+  );
 }
