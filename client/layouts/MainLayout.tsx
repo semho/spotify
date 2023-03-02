@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar";
+import Player from "@/components/Player";
 import { Container } from "@mui/system";
 import React from "react";
 
@@ -13,6 +14,7 @@ const MainLayout = ({ children }: ILayoutProps) => {
       <Container>
         <div className="main-layout">{children}</div>
       </Container>
+      <Player />
 
       <style jsx>
         {`
