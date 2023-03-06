@@ -1,7 +1,8 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { AppState } from "./store";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { IPlayerState } from "@/types/player";
+import { AppState } from ".";
+import { ITrack } from "@/types/track";
 
 // Initial state
 const initialState: IPlayerState = {
@@ -26,19 +27,19 @@ export const playerSlice = createSlice({
       return { ...state, pause: true };
     },
     // Action to set the player active
-    setActiveState(state, action) {
+    setActiveState(state, action: PayloadAction<ITrack>) {
       return { ...state, active: action.payload };
     },
     // Action to set the player current time
-    setCurrentTimeState(state, action) {
+    setCurrentTimeState(state, action: PayloadAction<number>) {
       return { ...state, currentTime: action.payload };
     },
     // Action to set the player duration
-    setDurationState(state, action) {
+    setDurationState(state, action: PayloadAction<number>) {
       return { ...state, duration: action.payload };
     },
     // Action to set the player volume
-    setVolumeState(state, action) {
+    setVolumeState(state, action: PayloadAction<number>) {
       return { ...state, volume: action.payload, duration: 0, currentTime: 0 };
     },
   },

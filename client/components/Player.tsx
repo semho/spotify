@@ -1,12 +1,13 @@
-import { ITrack } from '@/types/track';
-import { Pause, PlayArrow, VolumeUp } from '@mui/icons-material'
-import { Grid, IconButton } from '@mui/material'
-import React from 'react'
+import { useAppDispatch, useAppSelector } from "@/store";
+import { setPauseState, setPlayState } from "@/store/playerSlice";
+import { ITrack } from "@/types/track";
+import { Pause, PlayArrow, VolumeUp } from "@mui/icons-material";
+import { Grid, IconButton } from "@mui/material";
+import React from "react";
 import styles from "../styles/Player.module.scss";
-import TrackProgress from './TrackProgress';
+import TrackProgress from "./TrackProgress";
 
 export default function Player() {
-  const active = false;
   const track: ITrack = {
     _id: "1",
     name: "Track 1",
@@ -25,18 +26,32 @@ export default function Player() {
       },
     ],
   };
+
+  const { pause, volume, duration, currentTime, active } = useAppSelector(
+    (state) => state.player
+  );
+  const dispatch = useAppDispatch();
+
+  const play = () => {
+    if (pause) {
+      dispatch(setPlayState);
+    } else {
+      dispatch(setPauseState);
+    }
+  };
+
   return (
     <div className={styles.player}>
-      <IconButton onClick={(e) => e.stopPropagation()}>
-        {active ? <Pause /> : <PlayArrow />}
+      <IconButton onClick={play}>
+        {pause ? <Pause /> : <PlayArrow />}
       </IconButton>
       <Grid container direction="column" className={styles["box-name"]}>
         <div>{track.name}</div>
         <div className={styles.artist}>{track.artist}</div>
       </Grid>
       <TrackProgress left={0} right={100} onChange={() => ({})} />
-      <VolumeUp className={styles.volume}/>
+      <VolumeUp className={styles.volume} />
       <TrackProgress left={0} right={100} onChange={() => ({})} />
     </div>
-  )
+  );
 }
