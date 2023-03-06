@@ -8,7 +8,7 @@ export default function TrackForm() {
       <Grid container direction='column' className={styles.box}>
         <TextField label={'Название трека'}></TextField>
         <TextField label={'Имя исполнителя'}></TextField>
-        <TextField label={'Слока к треку'} multiline rows={3}></TextField>
+        <TextField label={'Слова к треку'} multiline rows={3}></TextField>
       </Grid>
     </>
   )
