@@ -1,8 +1,10 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { HYDRATE } from "next-redux-wrapper";
 import { IPlayerState } from "@/types/player";
 import { AppState } from ".";
 import { ITrack } from "@/types/track";
+
+const hydrate = createAction<AppState>(HYDRATE);
 
 // Initial state
 const initialState: IPlayerState = {
@@ -45,13 +47,21 @@ export const playerSlice = createSlice({
   },
 
   // Special reducer for hydrating the state. Special case for next-redux-wrapper
-  extraReducers: {
-    [HYDRATE]: (state, action) => {
+  // extraReducers: {
+  //   [HYDRATE]: (state, action) => {
+  //     return {
+  //       ...state,
+  //       ...action.payload,
+  //     };
+  //   },
+  // },
+  extraReducers: (builder) => {
+    builder.addCase(hydrate, (state, action) => {
       return {
         ...state,
         ...action.payload,
       };
-    },
+    });
   },
 });
 
