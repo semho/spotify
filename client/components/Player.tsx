@@ -34,9 +34,9 @@ export default function Player() {
 
   const play = () => {
     if (pause) {
-      dispatch(setPlayState);
+      dispatch(setPlayState());
     } else {
-      dispatch(setPauseState);
+      dispatch(setPauseState());
     }
   };
 

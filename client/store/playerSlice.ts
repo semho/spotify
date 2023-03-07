@@ -21,12 +21,12 @@ export const playerSlice = createSlice({
   initialState,
   reducers: {
     // Action to set the player play
-    setPlayState(state, action) {
-      return { ...state, pause: false };
+    setPlayState(state) {
+      state.pause = false;
     },
     // Action to set the player pause
-    setPauseState(state, action) {
-      return { ...state, pause: true };
+    setPauseState(state) {
+      state.pause = true;
     },
     // Action to set the player active
     setActiveState(state, action: PayloadAction<ITrack>) {
@@ -57,6 +57,7 @@ export const playerSlice = createSlice({
   // },
   extraReducers: (builder) => {
     builder.addCase(hydrate, (state, action) => {
+      console.log("hydrate");
       return {
         ...state,
         ...action.payload,

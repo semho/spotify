@@ -24,8 +24,8 @@ export type AppThunk<ReturnType = void> = ThunkAction<
 /**
  * для удобства преобразуем dispatch и selector
  */
-export type AppDispatch = typeof store.dispatch;
-// export type AppDispatch = AppStore["dispatch"];
+
+export type AppDispatch = AppStore["dispatch"];
 export const useAppDispatch: () => AppDispatch = useDispatch;
 
 export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector;

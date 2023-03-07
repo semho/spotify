@@ -11,4 +11,4 @@ const WrappedApp = ({ Component, ...rest }: AppProps) => {
   );
 };
 
-export default wrapper.withRedux(WrappedApp);
+export default WrappedApp;
