@@ -15,9 +15,9 @@ export default function index() {
       text: "Some text 1",
       listens: 5,
       picture:
-        "http://127.0.0.1:5000/image/6721b188-d459-4a07-9c48-ec6836225c99.jpg",
+        "http://127.0.0.1:5000/image/3a6bfddf-fe1f-4757-ad17-91c3e9b72b06.jpg",
       audio:
-        "http://127.0.0.1:5000/audio/bd85f2e3-3074-4a11-ac57-9f0031adde4a.mp3",
+        "http://127.0.0.1:5000/audio/c750951b-4a1c-405d-b815-e9aae790ea86.mp3",
     },
     {
       _id: "2",
@@ -26,9 +26,9 @@ export default function index() {
       text: "Some text 2",
       listens: 2,
       picture:
-        "http://127.0.0.1:5000/image/eb567fa1-fd6b-4778-bf97-1cbbd2f1ccd0.png",
+        "http://127.0.0.1:5000/image/3a6bfddf-fe1f-4757-ad17-91c3e9b72b06.jpg",
       audio:
-        "http://127.0.0.1:5000/audio/bbb78269-6e1a-4596-8865-2e7f0f9e41ad.mp3",
+        "http://127.0.0.1:5000/audio/c750951b-4a1c-405d-b815-e9aae790ea86.mp3",
     },
     {
       _id: "3",
@@ -37,9 +37,9 @@ export default function index() {
       text: "Some text 3",
       listens: 30,
       picture:
-        "http://127.0.0.1:5000/image/6721b188-d459-4a07-9c48-ec6836225c99.jpg",
+        "http://127.0.0.1:5000/image/3a6bfddf-fe1f-4757-ad17-91c3e9b72b06.jpg",
       audio:
-        "http://127.0.0.1:5000/audio/bd85f2e3-3074-4a11-ac57-9f0031adde4a.mp3",
+        "http://127.0.0.1:5000/audio/c750951b-4a1c-405d-b815-e9aae790ea86.mp3",
     },
   ];
   return (

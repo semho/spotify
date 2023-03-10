@@ -11,7 +11,7 @@ const initialState: IPlayerState = {
   currentTime: 0,
   duration: 0,
   active: null,
-  volume: 0,
+  volume: 50,
   pause: true,
 };
 

@@ -1,3 +1,5 @@
+import { useAppDispatch } from "@/store";
+import { setActiveState, setPlayState } from "@/store/playerSlice";
 import { ITrack } from "@/types/track";
 import { Delete, Pause, PlayArrow } from "@mui/icons-material";
 import { Card, Grid, IconButton } from "@mui/material";
@@ -12,13 +14,19 @@ interface ITrackItemProps {
 
 export default function TrackItem({ track, active = false }: ITrackItemProps) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const play = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation();
+    dispatch(setActiveState(track));
+    dispatch(setPlayState());
+  }
 
   return (
     <Card
       className={styles.track}
       onClick={() => router.push("/tracks/" + track._id)}
     >
-      <IconButton onClick={(e) => e.stopPropagation()}>
+      <IconButton onClick={play}>
         {active ? <Pause /> : <PlayArrow />}
       </IconButton>
       <img width={50} height={50} src={track.picture} />
