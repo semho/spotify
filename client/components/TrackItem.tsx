@@ -29,7 +29,7 @@ export default function TrackItem({ track, active = false }: ITrackItemProps) {
       <IconButton onClick={play}>
         {active ? <Pause /> : <PlayArrow />}
       </IconButton>
-      <img width={50} height={50} src={track.picture} />
+      <img width={50} height={50} src={'http://localhost:5000/' + track.picture} />
       <Grid container direction="column" className={styles["box-name"]}>
         <div>{track.name}</div>
         <div className={styles.artist}>{track.artist}</div>

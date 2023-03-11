@@ -17,3 +17,9 @@ export interface ITrack {
   comments?: IComment[];
   albums?: IAlbum[];
 }
+
+export interface ITrackState {
+  tracks: ITrack[];
+  error: string;
+  loading: boolean;
+}

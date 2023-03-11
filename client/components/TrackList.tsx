@@ -4,7 +4,7 @@ import { Box } from "@mui/system";
 import React from "react";
 import TrackItem from "./TrackItem";
 
-interface ITrackListProps {
+export interface ITrackListProps {
   tracks: ITrack[];
 }
 

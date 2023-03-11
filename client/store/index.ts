@@ -1,12 +1,21 @@
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  ThunkAction,
+  Action,
+  AnyAction,
+  ThunkDispatch,
+} from "@reduxjs/toolkit";
 import { playerSlice } from "./playerSlice";
+import { trackSlice } from "./trackSlice";
 import { createWrapper } from "next-redux-wrapper";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 const store = configureStore({
   reducer: {
     [playerSlice.name]: playerSlice.reducer,
+    [trackSlice.name]: trackSlice.reducer,
   },
+  // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
   devTools: true,
 });
 
@@ -31,3 +40,5 @@ export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector;
 
 export const wrapper = createWrapper<AppStore>(makeStore);
+
+// export type NextThunkDispatch = ThunkDispatch<AppState, void, AnyAction>;
