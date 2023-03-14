@@ -1,17 +1,36 @@
 import FileUpload from "@/components/FileUpload";
 import StepWrapper from "@/components/StepWrapper";
-import TrackForm from "@/components/TrackForm";
+import { TrackForm } from "@/components/TrackForm";
+import { useInput } from "@/hooks/useInput";
 import MainLayout from "@/layouts/MainLayout";
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid } from "@mui/material";
+import axios from "axios";
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 
 export default function create() {
   const [activeStep, setActiveStep] = useState(0);
-  const [picture, setPicture] = useState(null);
-  const [audio, setAudio] = useState(null);
+  const [picture, setPicture] = useState('');
+  const [audio, setAudio] = useState('');
+  const name = useInput('');
+  const artist = useInput('');
+  const text = useInput('');
+  const router = useRouter();
+
+
   const next = () => {
     if (activeStep !== 2) {
       setActiveStep(prev => prev + 1)
+    } else {
+      const formData = new FormData();
+      formData.append('name', name.value);
+      formData.append('artist', artist.value);
+      formData.append('text', text.value);
+      formData.append('picture', picture);
+      formData.append('audio', audio);
+      axios.post('http://localhost:5000/tracks', formData)
+      .then(resp => router.push('/tracks'))
+      .catch(e => console.log(e));
     }
   }
   
@@ -22,7 +41,7 @@ export default function create() {
     <MainLayout>
       <StepWrapper activeStep={activeStep}>
         {activeStep === 0 && 
-          <TrackForm />
+          <TrackForm name = {name} artist = {artist} text = {text}/>
         }
         {activeStep === 1 && 
           <FileUpload setFile={setPicture} accept='image/*'>
