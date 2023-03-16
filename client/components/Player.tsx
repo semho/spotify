@@ -18,7 +18,8 @@ export default function Player() {
   useEffect(() => {
     if (!audio) {
       audio = new Audio();
-    } else {
+    } 
+    else {
       setAudio();
       play();
     }
@@ -40,7 +41,17 @@ export default function Player() {
   const play = () => {
     if (pause) {
       dispatch(setPlayState());
-      audio.play();
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+          playPromise.then(_ => {
+            // Automatic playback started!
+            // Show playing UI.
+          })
+          .catch(error => {
+            // Auto-play was prevented
+            // Show paused UI.
+          });
+      }
     } else {
       dispatch(setPauseState());
       audio.pause();
@@ -64,7 +75,7 @@ export default function Player() {
   return (
     <div className={styles.player}>
       <IconButton onClick={play}>
-        {!pause ? <Pause /> : <PlayArrow />}
+        {pause ? <PlayArrow /> : <Pause /> }
       </IconButton>
       <Grid container direction="column" className={styles["box-name"]}>
         <div>{active?.name}</div>

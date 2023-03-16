@@ -1,30 +1,32 @@
+import { useInput } from "@/hooks/useInput";
 import MainLayout from "@/layouts/MainLayout";
 import { ITrack } from "@/types/track";
 import { Button, Divider, Grid, TextField } from "@mui/material";
+import axios from "axios";
+import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React from "react";
+import React, { useState } from "react";
 import styles from "../../styles/TrackPage.module.scss";
 
-export default function TrackPage() {
-  const track: ITrack = {
-    _id: "1",
-    name: "Track 1",
-    artist: "Artist 1",
-    text: "Some text 1",
-    listens: 5,
-    picture:
-      "http://127.0.0.1:5000/image/6721b188-d459-4a07-9c48-ec6836225c99.jpg",
-    audio:
-      "http://127.0.0.1:5000/audio/bd85f2e3-3074-4a11-ac57-9f0031adde4a.mp3",
-    comments: [
-      {
-        _id: "1",
-        username: "Автор 1",
-        text: "text comment",
-      },
-    ],
-  };
+export default function TrackPage({serverTrack}: any) {
+  const [track, setTrack] = useState<ITrack>(serverTrack);
   const router = useRouter();
+  const username = useInput('');
+  const text = useInput('');
+
+  const addComment = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/tracks/comment', {
+        username: username.value,
+        text: text.value,
+        trackId: track._id
+      });
+
+      setTrack({...track, comments: track.comments ? [...track.comments, response.data] : [response.data]})
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <MainLayout>
@@ -36,7 +38,7 @@ export default function TrackPage() {
         к списку
       </Button>
       <Grid container className={styles.box}>
-        <img src={track.picture} width={200} height={200} />
+        <img src={'http://localhost:5000/' + track.picture} width={200} height={200} />
         <div className={styles.info}>
           <h1>Название трека - {track.name}</h1>
           <h2>Исполнитель - {track.artist}</h2>
@@ -48,9 +50,9 @@ export default function TrackPage() {
       <Divider flexItem className={styles.devider} />
       <h4>Комментарии</h4>
       <Grid container className={styles["second-box"]}>
-        <TextField label="Ваше Имя" fullWidth />
-        <TextField label="Комментарий" fullWidth multiline rows={4} />
-        <Button variant={"contained"} className={styles.button}>
+        <TextField label="Ваше Имя" fullWidth {...username} />
+        <TextField label="Комментарий" fullWidth multiline rows={4} {...text}/>
+        <Button variant={"contained"} className={styles.button} onClick={addComment}>
           Отправить
         </Button>
       </Grid>
@@ -65,4 +67,15 @@ export default function TrackPage() {
       </div>
     </MainLayout>
   );
+}
+
+
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
+  const response = await axios.get('http://localhost:5000/tracks/' + params?.id)
+  
+  return {
+    props: {
+      serverTrack: response.data
+    }
+  }
 }

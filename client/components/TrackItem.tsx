@@ -1,4 +1,4 @@
-import { useAppDispatch } from "@/store";
+import { useAppDispatch, useAppSelector } from "@/store";
 import { setActiveState, setPlayState } from "@/store/playerSlice";
 import { ITrack } from "@/types/track";
 import { Delete, Pause, PlayArrow } from "@mui/icons-material";
@@ -27,7 +27,7 @@ export default function TrackItem({ track, active = false }: ITrackItemProps) {
       onClick={() => router.push("/tracks/" + track._id)}
     >
       <IconButton onClick={play}>
-        {active ? <Pause /> : <PlayArrow />}
+       {!active ? <PlayArrow/> : <Pause/>}
       </IconButton>
       <img width={50} height={50} src={'http://localhost:5000/' + track.picture} />
       <Grid container direction="column" className={styles["box-name"]}>

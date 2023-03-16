@@ -11,17 +11,17 @@ export default function index({tracks}: ITrackListProps) {
   const router = useRouter();
   //можно использовать селектор и убрать пропс tracks
   // const { tracks, error, loading} = useAppSelector(state => state.tracks);
-  const [loadingSSP, setLoadingSSP] = useState(true);
+  const [loadingState, setLoadingState] = useState(true);
   
   useEffect(() => {
-    setLoadingSSP(false);
-  }, [loadingSSP]);
+    setLoadingState(false);
+  }, [loadingState]);
   // if (error) {
   //   return (<MainLayout><h1>{error}</h1></MainLayout>)
   // }
 
 
-  if (loadingSSP) {
+  if (loadingState) {
     return (<h1>Loading</h1>)
   }
 
