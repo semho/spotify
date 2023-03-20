@@ -57,7 +57,7 @@ export const playerSlice = createSlice({
   // },
   extraReducers: (builder) => {
     builder.addCase(hydrate, (state, action) => {
-      console.log("hydrate player");
+      console.log("hydrate player", action.payload.player);
       return {
         ...state,
         ...action.payload.player,

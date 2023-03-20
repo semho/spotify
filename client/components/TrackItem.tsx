@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "@/store";
 import { setActiveState, setPlayState } from "@/store/playerSlice";
+import { deleteTrack } from "@/store/trackSlice";
 import { ITrack } from "@/types/track";
 import { Delete, Pause, PlayArrow } from "@mui/icons-material";
 import { Card, Grid, IconButton } from "@mui/material";
@@ -21,6 +22,11 @@ export default function TrackItem({ track, active = false }: ITrackItemProps) {
     dispatch(setPlayState());
   }
 
+  const deleteTrackById = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.stopPropagation;
+    dispatch(deleteTrack(track._id));
+  }
+
   return (
     <Card
       className={styles.track}
@@ -36,7 +42,7 @@ export default function TrackItem({ track, active = false }: ITrackItemProps) {
       </Grid>
       {active && <div>02:40 / 03:50</div>}
       <IconButton
-        onClick={(e) => e.stopPropagation()}
+        onClick={deleteTrackById}
         className={styles.delete}
       >
         <Delete />

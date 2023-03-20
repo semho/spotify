@@ -1,15 +1,16 @@
 import { useInput } from "@/hooks/useInput";
 import MainLayout from "@/layouts/MainLayout";
-import { ITrack } from "@/types/track";
+import { IServerTrack, ITrack } from "@/types/track";
 import { Button, Divider, Grid, TextField } from "@mui/material";
 import axios from "axios";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../../styles/TrackPage.module.scss";
 
-export default function TrackPage({serverTrack}: any) {
-  const [track, setTrack] = useState<ITrack>(serverTrack);
+export default function TrackPage({serverTrack}: IServerTrack) {
+  const [track, setTrack] = useState(serverTrack);
+  const [loadingState, setLoadingState] = useState(true);
   const router = useRouter();
   const username = useInput('');
   const text = useInput('');
@@ -28,8 +29,20 @@ export default function TrackPage({serverTrack}: any) {
     }
   }
 
+  useEffect(() => {
+    setLoadingState(false);
+  }, [loadingState]);
+
+
+  if (loadingState) {
+    return (<MainLayout><h1>Loading</h1></MainLayout>)
+  }
+
   return (
-    <MainLayout>
+    <MainLayout 
+      title={"spotify - " + track.name + " - " + track.artist}
+      keywords={'музыка, артисты, трек - ' + track.name}
+      >
       <Button
         variant={"outlined"}
         style={{ fontSize: 16 }}

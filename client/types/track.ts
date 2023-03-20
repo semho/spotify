@@ -23,3 +23,7 @@ export interface ITrackState {
   error: string;
   loading: boolean;
 }
+
+export interface IServerTrack {
+  serverTrack: ITrack;
+}
