@@ -21,7 +21,11 @@ export class FileService {
     try {
       const fileExtension = file.originalname.split('.').pop();
       const fileName = randomUUID() + '.' + fileExtension;
-      const filePath = path.resolve(__dirname, '..', 'static', type);
+
+      //путь для хранения внутри папки dist
+      //const filePath = path.resolve(__dirname, '..', 'static', type);
+      //путь для хранения на одном уровне с dist
+      const filePath = path.resolve(__dirname, '../..', 'static', type);
 
       if (!fs.existsSync(filePath)) {
         fs.mkdirSync(filePath, { recursive: true });
