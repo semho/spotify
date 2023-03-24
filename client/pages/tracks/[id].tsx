@@ -1,9 +1,10 @@
 import { useInput } from '@/hooks/useInput';
 import MainLayout from '@/layouts/MainLayout';
-import { IServerTrack, ITrack } from '@/types/track';
+import { IServerTrack } from '@/types/track';
 import { Button, Divider, Grid, TextField } from '@mui/material';
 import axios from 'axios';
 import { GetServerSideProps } from 'next';
+import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/TrackPage.module.scss';
@@ -62,10 +63,11 @@ export default function TrackPage({ serverTrack }: IServerTrack) {
         к списку
       </Button>
       <Grid container className={styles.box}>
-        <img
+        <Image
           src={'http://localhost:5000/' + track.picture}
           width={200}
           height={200}
+          alt=""
         />
         <div className={styles.info}>
           <h1>Название трека - {track.name}</h1>

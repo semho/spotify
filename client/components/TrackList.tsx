@@ -1,8 +1,8 @@
-import { ITrack } from "@/types/track";
-import { Grid } from "@mui/material";
-import { Box } from "@mui/system";
-import React from "react";
-import TrackItem from "./TrackItem";
+import { ITrack } from '@/types/track';
+import { Grid } from '@mui/material';
+import { Box } from '@mui/system';
+import React from 'react';
+import TrackItem from './TrackItem';
 
 export interface ITrackListProps {
   tracks: ITrack[];

@@ -1,8 +1,8 @@
-import { createAction, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { HYDRATE } from "next-redux-wrapper";
-import { IPlayerState } from "@/types/player";
-import { AppState } from ".";
-import { ITrack } from "@/types/track";
+import { createAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { HYDRATE } from 'next-redux-wrapper';
+import { IPlayerState } from '@/types/player';
+import { AppState } from '.';
+import { ITrack } from '@/types/track';
 
 const hydrate = createAction<AppState>(HYDRATE);
 
@@ -17,7 +17,7 @@ const initialState: IPlayerState = {
 
 // Actual Slice
 export const playerSlice = createSlice({
-  name: "player",
+  name: 'player',
   initialState,
   reducers: {
     // Action to set the player play
@@ -57,7 +57,7 @@ export const playerSlice = createSlice({
   // },
   extraReducers: (builder) => {
     builder.addCase(hydrate, (state, action) => {
-      console.log("hydrate player", action.payload.player);
+      console.log('hydrate player', action.payload.player);
       return {
         ...state,
         ...action.payload.player,
