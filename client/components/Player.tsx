@@ -96,6 +96,7 @@ export default function Player() {
         left={currentTime}
         right={duration}
         onChange={changeCurrentTime}
+        isTimeFormat={true}
       />
       <VolumeUp className={styles.volume} />
       <TrackProgress left={volume} right={100} onChange={changeVolume} />

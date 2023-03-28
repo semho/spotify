@@ -2,21 +2,24 @@ import { useAppDispatch, useAppSelector } from '@/store';
 import { setActiveState, setPlayState } from '@/store/playerSlice';
 import { deleteTrack } from '@/store/trackSlice';
 import { ITrack } from '@/types/track';
+import timeFormat from '@/utils/timeFormat';
 import { Delete, Pause, PlayArrow } from '@mui/icons-material';
 import { Card, Grid, IconButton } from '@mui/material';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from '../styles/TrackItem.module.scss';
 
 interface ITrackItemProps {
   track: ITrack;
-  active?: boolean;
 }
 
-export default function TrackItem({ track, active = false }: ITrackItemProps) {
+export default function TrackItem({ track }: ITrackItemProps) {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const statePlayer = useAppSelector((state) => state.player);
+  const [trackPlay, setTrackPlay] = useState(false);
+  const [trackDuration, setTrackDuration] = useState('0');
   const play = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     dispatch(setActiveState(track));
@@ -30,13 +33,30 @@ export default function TrackItem({ track, active = false }: ITrackItemProps) {
     dispatch(deleteTrack(track._id));
   };
 
+  const setAudio = useCallback(() => {
+    const audio: HTMLAudioElement = new Audio();
+    audio.src = 'http://localhost:5000/' + track.audio;
+    audio.onloadedmetadata = async () => {
+      setTrackDuration(timeFormat(audio.duration));
+    };
+  }, [track.audio]);
+
+  useEffect(() => {
+    setAudio();
+
+    setTrackPlay(false);
+    if (statePlayer.active?._id === track._id) {
+      setTrackPlay(true);
+    }
+  }, [setAudio, statePlayer.active?._id, track]);
+
   return (
     <Card
       className={styles.track}
       onClick={() => router.push('/tracks/' + track._id)}
     >
       <IconButton onClick={play}>
-        {!active ? <PlayArrow /> : <Pause />}
+        {!trackPlay ? <PlayArrow /> : <Pause />}
       </IconButton>
       <Image
         width={50}
@@ -48,7 +68,7 @@ export default function TrackItem({ track, active = false }: ITrackItemProps) {
         <div>{track.name}</div>
         <div className={styles.artist}>{track.artist}</div>
       </Grid>
-      {active && <div>02:40 / 03:50</div>}
+      {trackDuration && <div>{trackDuration}</div>}
       <IconButton onClick={deleteTrackById} className={styles.delete}>
         <Delete />
       </IconButton>

@@ -42,7 +42,10 @@ export const playerSlice = createSlice({
     },
     // Action to set the player volume
     setVolumeState(state, action: PayloadAction<number>) {
-      return { ...state, volume: action.payload, duration: 0, currentTime: 0 };
+      return {
+        ...state,
+        volume: action.payload,
+      };
     },
   },
 
