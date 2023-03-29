@@ -45,12 +45,16 @@ export default function create() {
         )}
         {activeStep === 1 && (
           <FileUpload setFile={setPicture} accept="image/*">
-            <Button>Загрузить изображение</Button>
+            <Button sx={{ width: '100%', height: '100%' }}>
+              Загрузить изображение
+            </Button>
           </FileUpload>
         )}
         {activeStep === 2 && (
           <FileUpload setFile={setAudio} accept="audio/*">
-            <Button>Загрузить аудио</Button>
+            <Button sx={{ width: '100%', height: '100%' }}>
+              Загрузить аудио
+            </Button>
           </FileUpload>
         )}
       </StepWrapper>

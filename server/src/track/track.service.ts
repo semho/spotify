@@ -70,7 +70,8 @@ export class TrackService {
   async listen(id: ObjectId) {
     const track = await this.trackModel.findById(id);
     track.listens += 1;
-    track.save();
+    await track.save();
+    return true;
   }
 
   async addAlbum(dto: CreateAlbumDto): Promise<Album> {

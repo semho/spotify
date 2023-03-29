@@ -46,10 +46,10 @@ export default function Search() {
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Поиск треков"
+            placeholder="Поиск треков по названию"
             value={query}
             onChange={search}
-            inputProps={{ 'aria-label': 'Поиск треков' }}
+            inputProps={{ 'aria-label': 'Поиск треков треков по названию' }}
           />
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
           <IconButton type="button" sx={{ p: '10px' }} aria-label="search">

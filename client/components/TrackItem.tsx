@@ -47,6 +47,7 @@ export default function TrackItem({ track }: ITrackItemProps) {
     setTrackPlay(false);
     if (statePlayer.active?._id === track._id) {
       setTrackPlay(true);
+      console.log(track);
     }
   }, [setAudio, statePlayer.active?._id, track]);
 

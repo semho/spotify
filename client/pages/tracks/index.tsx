@@ -10,7 +10,6 @@ import Search from '@/components/Search';
 
 export default function index() {
   const router = useRouter();
-  //можно использовать селектор и убрать пропс tracks
   const { tracks, loading, error } = useAppSelector((state) => state.tracks);
   const [loadingState, setLoadingState] = useState(true);
 
@@ -45,9 +44,9 @@ export default function index() {
               </Button>
             </Grid>
           </Box>
-          {tracks.length > 0 && <Search />}
+          <Search />
           {tracks.length === 0 && (
-            <Box textAlign="center">Загруженных треков пока нет</Box>
+            <Box textAlign="center">Треки не найдены</Box>
           )}
           <TrackList tracks={tracks} />
         </Card>

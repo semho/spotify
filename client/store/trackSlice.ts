@@ -3,53 +3,53 @@ import {
   createAsyncThunk,
   createSlice,
   PayloadAction,
-} from "@reduxjs/toolkit";
-import { HYDRATE } from "next-redux-wrapper";
-import { AppState } from ".";
-import { ITrack, ITrackState } from "@/types/track";
-import axios from "axios";
+} from '@reduxjs/toolkit';
+import { HYDRATE } from 'next-redux-wrapper';
+import { AppState } from '.';
+import { ITrack, ITrackState } from '@/types/track';
+import axios from 'axios';
 
 const hydrate = createAction<AppState>(HYDRATE);
 
 const initialState: ITrackState = {
   tracks: [],
-  error: "",
+  error: '',
   loading: false,
 };
 
 export const getTracks = createAsyncThunk(
-  "track/getTracks",
+  'track/getTracks',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get("http://localhost:5000/tracks");
+      const response = await axios.get('http://localhost:5000/tracks');
       return response.data;
     } catch (error) {
       console.log(error);
-      return rejectWithValue("Ошибка: " + (error as Error).message);
+      return rejectWithValue('Ошибка: ' + (error as Error).message);
     }
-  }
+  },
 );
 
 export const searchTracks = createAsyncThunk(
-  "track/searchTracks",
+  'track/searchTracks',
   async (query: string, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/tracks/search?query=" + query
+        'http://localhost:5000/tracks/search?query=' + query,
       );
       return response.data;
     } catch (error) {
       console.log(error);
-      return rejectWithValue("Ошибка: " + (error as Error).message);
+      return rejectWithValue('Ошибка: ' + (error as Error).message);
     }
-  }
+  },
 );
 
 export const deleteTrack = createAsyncThunk(
-  "track/deleteTracks",
+  'track/deleteTracks',
   async (id: string, { rejectWithValue, dispatch }) => {
     try {
-      const response = await axios.delete("http://localhost:5000/tracks/" + id);
+      const response = await axios.delete('http://localhost:5000/tracks/' + id);
       if (!!response) {
         dispatch(removeTrack(id));
       }
@@ -57,14 +57,29 @@ export const deleteTrack = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.log(error);
-      return rejectWithValue("Ошибка удаления: " + (error as Error).message);
+      return rejectWithValue('Ошибка удаления: ' + (error as Error).message);
     }
-  }
+  },
+);
+
+export const addListeningTracks = createAsyncThunk(
+  'track/addListeningTracks',
+  async (id: string, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/tracks/listen/' + id,
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue('Ошибка: ' + (error as Error).message);
+    }
+  },
 );
 
 const setLoader = (state: ITrackState) => {
   state.loading = true;
-  state.error = "";
+  state.error = '';
 };
 
 const setError = (state: ITrackState, { payload }: any) => {
@@ -73,18 +88,18 @@ const setError = (state: ITrackState, { payload }: any) => {
 };
 
 export const trackSlice = createSlice({
-  name: "tracks",
+  name: 'tracks',
   initialState,
   reducers: {
     removeTrack: (state, action: PayloadAction<string>) => {
       state.tracks = state.tracks.filter(
-        (track) => track._id !== action.payload
+        (track) => track._id !== action.payload,
       );
     },
   },
   extraReducers: (builder) => {
     builder.addCase(hydrate, (state, action) => {
-      console.log("hydrate tracks", action.payload.tracks);
+      console.log('hydrate tracks', action.payload.tracks);
       return {
         ...state,
         ...action.payload.tracks,
@@ -96,20 +111,21 @@ export const trackSlice = createSlice({
       getTracks.fulfilled,
       (state, { payload }: PayloadAction<ITrack[]>) => {
         state.loading = false;
-        state.error = "";
+        state.error = '';
         state.tracks = payload;
-      }
+      },
     );
     builder.addCase(
       searchTracks.fulfilled,
       (state, { payload }: PayloadAction<ITrack[]>) => {
         state.loading = false;
-        state.error = "";
+        state.error = '';
         state.tracks = payload;
-      }
+      },
     );
     builder.addCase(getTracks.rejected, setError);
     builder.addCase(searchTracks.rejected, setError);
+    builder.addCase(addListeningTracks.rejected, setError);
   },
 });
 

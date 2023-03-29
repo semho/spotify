@@ -6,6 +6,7 @@ import {
   setPlayState,
   setVolumeState,
 } from '@/store/playerSlice';
+import { addListeningTracks } from '@/store/trackSlice';
 import { Pause, PlayArrow, VolumeUp } from '@mui/icons-material';
 import { Grid, IconButton } from '@mui/material';
 import React, { useEffect } from 'react';
@@ -40,6 +41,9 @@ export default function Player() {
       };
       audio.ontimeupdate = () => {
         dispatch(setCurrentTimeState(Math.ceil(audio.currentTime)));
+      };
+      audio.onended = () => {
+        dispatch(addListeningTracks(active._id));
       };
     }
   };
