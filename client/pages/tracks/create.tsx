@@ -4,9 +4,11 @@ import { TrackForm } from '@/components/TrackForm';
 import { useInput } from '@/hooks/useInput';
 import MainLayout from '@/layouts/MainLayout';
 import { Button, Grid } from '@mui/material';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
+import { useNotification } from '@/hooks/useNotification';
 
 export default function create() {
   const [activeStep, setActiveStep] = useState(0);
@@ -27,10 +29,20 @@ export default function create() {
       formData.append('text', text.value);
       formData.append('picture', picture);
       formData.append('audio', audio);
+
+      if (
+        name.value.length === 0 ||
+        picture.length === 0 ||
+        audio.length === 0
+      ) {
+        useNotification('Не все поля заполнены', 'error');
+        return;
+      }
+
       axios
         .post('http://localhost:5000/tracks', formData)
         .then((resp) => router.push('/tracks'))
-        .catch((e) => console.log(e));
+        .catch((e) => useNotification((e as Error).message, 'error'));
     }
   };
 
