@@ -1,8 +1,9 @@
 import { useInput } from '@/hooks/useInput';
+import { useNotification } from '@/hooks/useNotification';
 import MainLayout from '@/layouts/MainLayout';
+import { getTrack, newComment } from '@/store/api';
 import { IServerTrack } from '@/types/track';
 import { Button, Divider, Grid, TextField } from '@mui/material';
-import axios from 'axios';
 import { GetServerSideProps } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
@@ -18,14 +19,11 @@ export default function TrackPage({ serverTrack }: IServerTrack) {
 
   const addComment = async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/tracks/comment',
-        {
-          username: username.value,
-          text: text.value,
-          trackId: track._id,
-        },
-      );
+      const response = await newComment({
+        username: username.value,
+        text: text.value,
+        trackId: track._id,
+      });
 
       setTrack({
         ...track,
@@ -33,8 +31,9 @@ export default function TrackPage({ serverTrack }: IServerTrack) {
           ? [...track.comments, response.data]
           : [response.data],
       });
+      useNotification('Комментарий добавлен', 'success');
     } catch (error) {
-      console.log(error);
+      useNotification((error as Error).message, 'error');
     }
   };
 
@@ -104,9 +103,7 @@ export default function TrackPage({ serverTrack }: IServerTrack) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const response = await axios.get(
-    'http://localhost:5000/tracks/' + params?.id,
-  );
+  const response = await getTrack(params?.id);
 
   return {
     props: {

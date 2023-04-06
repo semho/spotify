@@ -9,6 +9,7 @@ import {
 import { addListeningTracks } from '@/store/trackSlice';
 import { Pause, PlayArrow, VolumeUp } from '@mui/icons-material';
 import { Grid, IconButton } from '@mui/material';
+import getConfig from 'next/config';
 import React, { useEffect } from 'react';
 import styles from '../styles/Player.module.scss';
 import TrackProgress from './TrackProgress';
@@ -16,6 +17,9 @@ import TrackProgress from './TrackProgress';
 let audio: HTMLAudioElement;
 
 export default function Player() {
+  const { publicRuntimeConfig } = getConfig();
+  const baseUrl = publicRuntimeConfig.apiUrl;
+
   const { pause, volume, duration, currentTime, active } = useAppSelector(
     (state) => state.player,
   );
@@ -34,7 +38,7 @@ export default function Player() {
 
   const setAudio = () => {
     if (active) {
-      audio.src = 'http://localhost:5000/' + active.audio;
+      audio.src = baseUrl + active.audio;
       audio.volume = volume / 100;
       audio.onloadedmetadata = () => {
         dispatch(setDurationState(Math.ceil(audio.duration)));

@@ -4,11 +4,11 @@ import { TrackForm } from '@/components/TrackForm';
 import { useInput } from '@/hooks/useInput';
 import MainLayout from '@/layouts/MainLayout';
 import { Button, Grid } from '@mui/material';
-import axios, { AxiosError } from 'axios';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { toast } from 'react-toastify';
 import { useNotification } from '@/hooks/useNotification';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { createTrack } from '@/store/trackSlice';
 
 export default function create() {
   const [activeStep, setActiveStep] = useState(0);
@@ -18,8 +18,10 @@ export default function create() {
   const artist = useInput('');
   const text = useInput('');
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { loading } = useAppSelector((state) => state.tracks);
 
-  const next = () => {
+  const next = async () => {
     if (activeStep !== 2) {
       setActiveStep((prev) => prev + 1);
     } else {
@@ -39,16 +41,29 @@ export default function create() {
         return;
       }
 
-      axios
-        .post('http://localhost:5000/tracks', formData)
-        .then((resp) => router.push('/tracks'))
-        .catch((e) => useNotification((e as Error).message, 'error'));
+      try {
+        const sendTrack = await dispatch(createTrack(formData));
+        if (!!sendTrack.payload) {
+          router.push('/tracks');
+        }
+      } catch (error) {
+        useNotification((error as Error).message, 'error');
+      }
     }
   };
 
   const back = () => {
     setActiveStep((prev) => prev - 1);
   };
+
+  if (loading) {
+    return (
+      <MainLayout>
+        <h1>Loading</h1>
+      </MainLayout>
+    );
+  }
+
   return (
     <MainLayout>
       <StepWrapper activeStep={activeStep}>

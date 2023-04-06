@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  publicRuntimeConfig: {
+    apiUrl: 'http://localhost:5000/',
+  },
   images: {
     remotePatterns: [
       {

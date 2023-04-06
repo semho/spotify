@@ -5,6 +5,7 @@ import { ITrack } from '@/types/track';
 import timeFormat from '@/utils/timeFormat';
 import { Delete, Pause, PlayArrow } from '@mui/icons-material';
 import { Card, Grid, IconButton } from '@mui/material';
+import getConfig from 'next/config';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -15,6 +16,9 @@ interface ITrackItemProps {
 }
 
 export default function TrackItem({ track }: ITrackItemProps) {
+  const { publicRuntimeConfig } = getConfig();
+  const baseUrl = publicRuntimeConfig.apiUrl;
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const statePlayer = useAppSelector((state) => state.player);
@@ -29,17 +33,17 @@ export default function TrackItem({ track }: ITrackItemProps) {
   const deleteTrackById = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
-    e.stopPropagation;
+    e.stopPropagation();
     dispatch(deleteTrack(track._id));
   };
 
   const setAudio = useCallback(() => {
     const audio: HTMLAudioElement = new Audio();
-    audio.src = 'http://localhost:5000/' + track.audio;
+    audio.src = baseUrl + track.audio;
     audio.onloadedmetadata = async () => {
       setTrackDuration(timeFormat(audio.duration));
     };
-  }, [track.audio]);
+  }, [baseUrl, track.audio]);
 
   useEffect(() => {
     setAudio();
@@ -48,7 +52,7 @@ export default function TrackItem({ track }: ITrackItemProps) {
     if (statePlayer.active?._id === track._id) {
       setTrackPlay(true);
     }
-  }, [setAudio, statePlayer.active?._id, track]);
+  }, [baseUrl, setAudio, statePlayer.active?._id, track]);
 
   return (
     <Card
@@ -58,12 +62,7 @@ export default function TrackItem({ track }: ITrackItemProps) {
       <IconButton onClick={play}>
         {!trackPlay ? <PlayArrow /> : <Pause />}
       </IconButton>
-      <Image
-        width={50}
-        height={50}
-        src={'http://localhost:5000/' + track.picture}
-        alt=""
-      />
+      <Image width={50} height={50} src={baseUrl + track.picture} alt="" />
       <Grid container direction="column" className={styles['box-name']}>
         <div>{track.name}</div>
         <div className={styles.artist}>{track.artist}</div>

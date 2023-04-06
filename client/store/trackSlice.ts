@@ -8,6 +8,8 @@ import { HYDRATE } from 'next-redux-wrapper';
 import { AppState } from '.';
 import { ITrack, ITrackState } from '@/types/track';
 import axios from 'axios';
+import * as api from './api';
+import { toast } from 'react-toastify';
 
 const hydrate = createAction<AppState>(HYDRATE);
 
@@ -21,7 +23,7 @@ export const getTracks = createAsyncThunk(
   'track/getTracks',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('http://localhost:5000/tracks');
+      const response = await api.getTracks();
       return response.data;
     } catch (error) {
       console.log(error);
@@ -34,9 +36,7 @@ export const searchTracks = createAsyncThunk(
   'track/searchTracks',
   async (query: string, { rejectWithValue }) => {
     try {
-      const response = await axios.get(
-        'http://localhost:5000/tracks/search?query=' + query,
-      );
+      const response = await api.searchTracks(query);
       return response.data;
     } catch (error) {
       console.log(error);
@@ -49,9 +49,10 @@ export const deleteTrack = createAsyncThunk(
   'track/deleteTracks',
   async (id: string, { rejectWithValue, dispatch }) => {
     try {
-      const response = await axios.delete('http://localhost:5000/tracks/' + id);
+      const response = await api.deleteTrack(id);
       if (!!response) {
         dispatch(removeTrack(id));
+        toast('Трек удален', { type: 'success' });
       }
 
       return response.data;
@@ -64,15 +65,31 @@ export const deleteTrack = createAsyncThunk(
 
 export const addListeningTracks = createAsyncThunk(
   'track/addListeningTracks',
-  async (id: string, { rejectWithValue, dispatch }) => {
+  async (id: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/tracks/listen/' + id,
-      );
+      const response = await api.addListeningTracks(id);
       return response.data;
     } catch (error) {
       console.log(error);
       return rejectWithValue('Ошибка: ' + (error as Error).message);
+    }
+  },
+);
+
+export const createTrack = createAsyncThunk(
+  'track/createTracks',
+  async (data: FormData, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.newTrack(data);
+      if (!!response) {
+        dispatch(newTrack(response.data));
+        toast('Трек добавлен', { type: 'success' });
+      }
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue('Ошибка создания: ' + (error as Error).message);
     }
   },
 );
@@ -96,6 +113,9 @@ export const trackSlice = createSlice({
         (track) => track._id !== action.payload,
       );
     },
+    newTrack: (state, action: PayloadAction<ITrack>) => {
+      state.tracks.push(action.payload);
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(hydrate, (state, action) => {
@@ -107,6 +127,7 @@ export const trackSlice = createSlice({
     });
     builder.addCase(getTracks.pending, setLoader);
     builder.addCase(searchTracks.pending, setLoader);
+    builder.addCase(createTrack.pending, setLoader);
     builder.addCase(
       getTracks.fulfilled,
       (state, { payload }: PayloadAction<ITrack[]>) => {
@@ -123,13 +144,22 @@ export const trackSlice = createSlice({
         state.tracks = payload;
       },
     );
+    builder.addCase(
+      createTrack.fulfilled,
+      (state, { payload }: PayloadAction<ITrack[]>) => {
+        state.loading = false;
+        state.error = '';
+        state.tracks = payload;
+      },
+    );
     builder.addCase(getTracks.rejected, setError);
     builder.addCase(searchTracks.rejected, setError);
     builder.addCase(addListeningTracks.rejected, setError);
+    builder.addCase(createTrack.rejected, setError);
   },
 });
 
-const { removeTrack } = trackSlice.actions;
+const { removeTrack, newTrack } = trackSlice.actions;
 
 export const selectTrackState = (state: AppState) => state.tracks;
 
