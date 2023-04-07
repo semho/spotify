@@ -10,11 +10,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import React, { useState } from 'react';
 import { useAppDispatch } from '@/store';
 import { searchTracks } from '@/store/trackSlice';
+import { searchAlbums } from '@/store/albumSlice';
 
-export default function Search() {
+type TSearch = {
+  find?: 'треков' | 'альбомов';
+};
+
+export default function Search({ find = 'треков' }: TSearch) {
   const [query, setQuery] = useState<string>('');
   const [timer, setTimer] = useState<NodeJS.Timeout>();
   const dispatch = useAppDispatch();
+  const findString = 'Поиск ' + find + ' по названию';
 
   const search = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value);
@@ -23,7 +29,11 @@ export default function Search() {
     }
     setTimer(
       setTimeout(async () => {
-        await dispatch(searchTracks(e.target.value));
+        if (find == 'треков') {
+          await dispatch(searchTracks(e.target.value));
+        } else {
+          await dispatch(searchAlbums(e.target.value));
+        }
       }, 500),
     );
   };
@@ -46,10 +56,10 @@ export default function Search() {
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Поиск треков по названию"
+            placeholder={findString}
             value={query}
             onChange={search}
-            inputProps={{ 'aria-label': 'Поиск треков треков по названию' }}
+            inputProps={{ 'aria-label': findString }}
           />
           <Divider sx={{ height: 28, m: 0.5 }} orientation="vertical" />
           <IconButton type="button" sx={{ p: '10px' }} aria-label="search">

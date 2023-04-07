@@ -7,7 +7,6 @@ import {
 import { HYDRATE } from 'next-redux-wrapper';
 import { AppState } from '.';
 import { ITrack, ITrackState } from '@/types/track';
-import axios from 'axios';
 import * as api from './api';
 import { toast } from 'react-toastify';
 

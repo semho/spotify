@@ -4,16 +4,18 @@ import {
   Action,
   AnyAction,
   ThunkDispatch,
-} from "@reduxjs/toolkit";
-import { playerSlice } from "./playerSlice";
-import { trackSlice } from "./trackSlice";
-import { createWrapper } from "next-redux-wrapper";
-import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
+} from '@reduxjs/toolkit';
+import { playerSlice } from './playerSlice';
+import { trackSlice } from './trackSlice';
+import { createWrapper } from 'next-redux-wrapper';
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import { albumSlice } from './albumSlice';
 
 const store = configureStore({
   reducer: {
     [playerSlice.name]: playerSlice.reducer,
     [trackSlice.name]: trackSlice.reducer,
+    [albumSlice.name]: albumSlice.reducer,
   },
   // middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(),
   devTools: true,
@@ -22,7 +24,7 @@ const store = configureStore({
 const makeStore = () => store;
 
 export type AppStore = ReturnType<typeof makeStore>;
-export type AppState = ReturnType<AppStore["getState"]>;
+export type AppState = ReturnType<AppStore['getState']>;
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   AppState,
@@ -34,7 +36,7 @@ export type AppThunk<ReturnType = void> = ThunkAction<
  * для удобства преобразуем dispatch и selector
  */
 
-export type AppDispatch = AppStore["dispatch"];
+export type AppDispatch = AppStore['dispatch'];
 export const useAppDispatch: () => AppDispatch = useDispatch;
 
 export const useAppSelector: TypedUseSelectorHook<AppState> = useSelector;

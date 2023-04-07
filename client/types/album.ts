@@ -1,4 +1,4 @@
-import { ITrack } from "./track";
+import { ITrack } from './track';
 
 export interface IAlbum {
   _id: string;
@@ -6,4 +6,10 @@ export interface IAlbum {
   author: string;
   picture: string;
   tracks: ITrack[];
+}
+
+export interface IAlbumState {
+  albums: IAlbum[];
+  error: string;
+  loading: boolean;
 }

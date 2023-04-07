@@ -46,7 +46,9 @@ export default function index() {
           </Box>
           <Search />
           {tracks.length === 0 && (
-            <Box textAlign="center">Треки не найдены</Box>
+            <Box textAlign="center">
+              <h2>Треки не найдены</h2>
+            </Box>
           )}
           <TrackList tracks={tracks} />
         </Card>
