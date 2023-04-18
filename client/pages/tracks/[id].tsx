@@ -5,6 +5,7 @@ import { getTrack, newComment } from '@/store/api';
 import { IServerTrack } from '@/types/track';
 import { Button, Divider, Grid, TextField } from '@mui/material';
 import { GetServerSideProps } from 'next';
+import getConfig from 'next/config';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -16,6 +17,8 @@ export default function TrackPage({ serverTrack }: IServerTrack) {
   const router = useRouter();
   const username = useInput('');
   const text = useInput('');
+  const { publicRuntimeConfig } = getConfig();
+  const baseUrl = publicRuntimeConfig.apiUrl;
 
   const addComment = async () => {
     try {
@@ -62,12 +65,7 @@ export default function TrackPage({ serverTrack }: IServerTrack) {
         к списку
       </Button>
       <Grid container className={styles.box}>
-        <Image
-          src={'http://localhost:5000/' + track.picture}
-          width={200}
-          height={200}
-          alt=""
-        />
+        <Image src={baseUrl + track.picture} width={200} height={200} alt="" />
         <div className={styles.info}>
           <h1>Название трека - {track.name}</h1>
           <h2>Исполнитель - {track.artist}</h2>

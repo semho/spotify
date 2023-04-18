@@ -13,3 +13,7 @@ export interface IAlbumState {
   error: string;
   loading: boolean;
 }
+
+export interface IServerAlbum {
+  serverAlbum: IAlbum;
+}

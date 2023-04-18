@@ -1,4 +1,5 @@
 import { useAppDispatch } from '@/store';
+import { deleteAlbum } from '@/store/albumSlice';
 import { IAlbum } from '@/types/album';
 import { Delete } from '@mui/icons-material';
 import { Card, Grid, IconButton } from '@mui/material';
@@ -23,7 +24,7 @@ export default function AlbumItem({ album }: IAlbumItemProps) {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.stopPropagation();
-    // dispatch(deleteAlbum(album._id));
+    dispatch(deleteAlbum(album._id));
   };
 
   return (

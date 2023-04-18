@@ -31,10 +31,14 @@ export const newComment = (record: {}) => Api.post('/tracks/comment', record);
 //** ---------- api albums ---------- **/
 export const getAlbums = () => Api.get('/albums');
 
+export const getAlbum = (id: string | string[] | undefined) =>
+  Api.get('/albums/' + id);
+
 export const searchAlbums = (query: string) =>
   Api.get('/albums/search?query=' + query);
 
 export const deleteAlbum = (id: string) => Api.delete('/albums/' + id);
 
 export const newAlbum = (record: {}) => Api.post('/albums', record);
+
 //** ----------  ---------- **/
