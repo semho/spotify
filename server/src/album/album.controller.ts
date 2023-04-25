@@ -17,6 +17,7 @@ import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ObjectId } from 'mongoose';
 import { CreateTrackDto } from 'src/track/dto/create-track.dto';
 import { AlbumService } from './album.service';
+import { AttachTracksDto } from './dto/attach-tracks.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album } from './schemas/album.schema';
 
@@ -57,5 +58,11 @@ export class AlbumController {
   @Post('/track')
   addTrack(@Body() dto: CreateTrackDto) {
     return this.albumService.addTrack(dto);
+  }
+
+  @Post('/attach')
+  attachTracks(@Body() dto: AttachTracksDto) {
+    const { idAlbum, idTracks } = dto;
+    return this.albumService.attachAlbum(idAlbum, idTracks);
   }
 }

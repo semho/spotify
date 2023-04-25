@@ -1,11 +1,24 @@
 import StepWrapper from '@/components/StepWrapper';
+import { useInput } from '@/hooks/useInput';
 import MainLayout from '@/layouts/MainLayout';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { getAlbum } from '@/store/api';
+import { attachTracksToAlbum, getAlbum } from '@/store/api';
 import { setPlayState } from '@/store/playerSlice';
 import { getTracks } from '@/store/trackSlice';
 import { IServerAlbum } from '@/types/album';
-import { Button, Divider, Grid, Hidden } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Divider,
+  Grid,
+  Hidden,
+  List,
+  ListItem,
+  ListItemAvatar,
+  TextField,
+} from '@mui/material';
 import { GetServerSideProps } from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
@@ -17,6 +30,7 @@ interface listTrack {
   id: string;
   name: string;
   artist: string;
+  picture: string;
 }
 
 export default function TrackPage({ serverAlbum }: IServerAlbum) {
@@ -30,6 +44,26 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
   const { tracks } = useAppSelector((state) => state.tracks);
   const dispatch = useAppDispatch();
 
+  const [attachTracks, setAttachTracks] = useState(album.tracks);
+
+  const addTrack = async (
+    e: React.MouseEvent<HTMLInputElement>,
+    id: string,
+  ) => {
+    const foundTrack = tracks.filter((record) => record._id == id);
+    //добавляем трек в список, если его нет. убираем, если он уже есть
+    if (
+      attachTracks.filter((record) => record._id == foundTrack[0]._id).length >
+      0
+    ) {
+      setAttachTracks(
+        attachTracks.filter((record) => record._id != foundTrack[0]._id),
+      );
+    } else {
+      setAttachTracks([...attachTracks, ...foundTrack]);
+    }
+  };
+
   const back = () => {
     setActiveStep((prev) => prev - 1);
   };
@@ -40,6 +74,7 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
         id: track._id,
         name: track.name,
         artist: track.artist,
+        picture: track.picture,
       };
     });
     setTrackList(updatedList);
@@ -48,6 +83,13 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
       setActiveStep((prev) => prev + 1);
     } else {
       //логика привязки трека
+      const idTracks: string[] = [];
+      attachTracks.map((track) => {
+        idTracks.push(track._id);
+      });
+      //TODO: делаем запроc на привязку id треков к альбому
+      const response = await attachTracksToAlbum(album._id, idTracks);
+      console.log(response);
     }
   };
 
@@ -100,11 +142,40 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
         >
           {activeStep === 0 && 'Что-то1'}
           {activeStep === 1 && (
-            <ul>
-              {trackList?.map((track) => {
-                return <li key={track.id}>{track.name}</li>;
-              })}
-            </ul>
+            <Box textAlign="center">
+              <h3>Выбирите трек для привязки</h3>
+              <List
+                sx={{
+                  width: '100%',
+                  maxWidth: 360,
+                  bgcolor: 'background.paper',
+                  overflowY: 'scroll',
+                  maxHeight: 300,
+                }}
+              >
+                {trackList?.map((track) => (
+                  <ListItem key={track.id}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <Image
+                          src={baseUrl + track.picture}
+                          width={200}
+                          height={200}
+                          alt=""
+                        />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <label htmlFor={track.id}>{track.name} </label>
+                    <input
+                      type="checkbox"
+                      name={track.id}
+                      id={track.id}
+                      onClick={(e) => addTrack(e, track.id)}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Box>
           )}
         </StepWrapper>
       </Hidden>

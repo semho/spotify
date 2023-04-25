@@ -41,4 +41,6 @@ export const deleteAlbum = (id: string) => Api.delete('/albums/' + id);
 
 export const newAlbum = (record: {}) => Api.post('/albums', record);
 
+export const attachTracksToAlbum = (idAlbum: string, idTracks: string[]) =>
+  Api.post('/albums/attach', { idAlbum, idTracks });
 //** ----------  ---------- **/

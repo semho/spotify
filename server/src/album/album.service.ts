@@ -2,7 +2,7 @@
 https://docs.nestjs.com/providers#services
 */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId, Types } from 'mongoose';
 import { FileService, FileType } from 'src/file/file.service';
@@ -58,5 +58,39 @@ export class AlbumService {
     album.tracks.push(track);
     await album.save();
     return track;
+  }
+
+  /**
+   * Связь уже сществующего альбомом с существующими треками
+   * @param idTracks
+   * @param idAlbum
+   * @returns Promise<Album>
+   */
+  async attachAlbum(idAlbum: ObjectId, idTracks: ObjectId[]): Promise<Album> {
+    const album = await this.albumModel.findById(idAlbum);
+
+    await Promise.all(
+      idTracks.map(async (idTrack) => {
+        const track = await this.trackModel.findById(idTrack);
+        if (!album.tracks.includes(track.id)) {
+          album.tracks.push(track);
+        }
+
+        if (!track.albums.includes(album.id)) {
+          track.albums.push(album);
+        }
+      }),
+    );
+
+    await album.save();
+
+    await Promise.all(
+      idTracks.map(async (idTrack) => {
+        const track = await this.trackModel.findById(idTrack);
+        await track.save();
+      }),
+    );
+
+    return album;
   }
 }
