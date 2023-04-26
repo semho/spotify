@@ -72,9 +72,9 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 }));
 
 const menuItems = [
-    {text: 'Главная', href: '/'},
-    {text: 'Список треков', href: '/tracks'},
-    {text: 'Список альбомов', href: '/albums'},
+  { text: 'Главная', href: '/' },
+  { text: 'Список треков', href: '/tracks' },
+  { text: 'Список альбомов', href: '/albums' },
 ];
 
 export default function Navbar() {
@@ -105,7 +105,7 @@ export default function Navbar() {
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Persistent drawer
+            Spotify
           </Typography>
         </Toolbar>
       </AppBar>
@@ -124,12 +124,20 @@ export default function Navbar() {
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            {theme.direction === 'ltr' ? (
+              <ChevronLeftIcon />
+            ) : (
+              <ChevronRightIcon />
+            )}
           </IconButton>
         </DrawerHeader>
         <List>
-          {menuItems.map(({text, href}, index) => (
-            <ListItem key={href} disablePadding onClick={() => router.push(href)}>
+          {menuItems.map(({ text, href }, index) => (
+            <ListItem
+              key={href}
+              disablePadding
+              onClick={() => router.push(href)}
+            >
               <ListItemButton>
                 <ListItemIcon>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}

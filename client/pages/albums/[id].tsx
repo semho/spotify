@@ -1,23 +1,21 @@
 import StepWrapper from '@/components/StepWrapper';
-import { useInput } from '@/hooks/useInput';
+import TrackList from '@/components/TrackList';
+import { useNotification } from '@/hooks/useNotification';
 import MainLayout from '@/layouts/MainLayout';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { attachTracksToAlbum, getAlbum } from '@/store/api';
-import { setPlayState } from '@/store/playerSlice';
 import { getTracks } from '@/store/trackSlice';
 import { IServerAlbum } from '@/types/album';
 import {
   Avatar,
   Box,
   Button,
-  Checkbox,
   Divider,
   Grid,
   Hidden,
   List,
   ListItem,
   ListItemAvatar,
-  TextField,
 } from '@mui/material';
 import { GetServerSideProps } from 'next';
 import getConfig from 'next/config';
@@ -88,8 +86,15 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
         idTracks.push(track._id);
       });
       //TODO: делаем запроc на привязку id треков к альбому
-      const response = await attachTracksToAlbum(album._id, idTracks);
-      console.log(response);
+      try {
+        const response = await attachTracksToAlbum(album._id, idTracks);
+        if (!!response.data) {
+          //TODO: можно переделать на setActiveStep(0); тогда не будет перезагрузки станицы, но тогда надо будет сохранять данные в стор и из них подтягивать треки альбома
+          window.location.reload();
+        }
+      } catch (error) {
+        useNotification((error as Error).message, 'error');
+      }
     }
   };
 
@@ -131,23 +136,28 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
           <Button onClick={back}>Назад</Button>
         </Hidden>
         <Hidden smUp={activeStep > 0}>
-          <h4>Треки альбома</h4>
+          {album.tracks.length === 0 ? (
+            <h2>Треки не найдены</h2>
+          ) : (
+            <h2>Треки альбома</h2>
+          )}
+          <TrackList tracks={album.tracks} isAlbum={true} />
         </Hidden>
-        <Button onClick={next}>Привязать трек</Button>
+        <Button onClick={next}>
+          {activeStep > 0 ? 'Закончить' : 'Привязать трек'}
+        </Button>
       </Grid>
       <Hidden smUp={activeStep === 0}>
         <StepWrapper
           activeStep={activeStep}
           steps={['Поиск треков', 'Привязка трека']}
         >
-          {activeStep === 0 && 'Что-то1'}
           {activeStep === 1 && (
             <Box textAlign="center">
               <h3>Выбирите трек для привязки</h3>
               <List
                 sx={{
                   width: '100%',
-                  maxWidth: 360,
                   bgcolor: 'background.paper',
                   overflowY: 'scroll',
                   maxHeight: 300,

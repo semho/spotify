@@ -13,9 +13,10 @@ import styles from '../styles/TrackItem.module.scss';
 
 interface ITrackItemProps {
   track: ITrack;
+  isAlbum?: boolean;
 }
 
-export default function TrackItem({ track }: ITrackItemProps) {
+export default function TrackItem({ track, isAlbum = false }: ITrackItemProps) {
   const { publicRuntimeConfig } = getConfig();
   const baseUrl = publicRuntimeConfig.apiUrl;
 
@@ -34,7 +35,12 @@ export default function TrackItem({ track }: ITrackItemProps) {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.stopPropagation();
-    dispatch(deleteTrack(track._id));
+
+    if (isAlbum) {
+      console.log(router.query);
+    } else {
+      dispatch(deleteTrack(track._id));
+    }
   };
 
   const setAudio = useCallback(() => {

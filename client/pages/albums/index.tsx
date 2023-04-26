@@ -40,7 +40,7 @@ export default function index() {
             <Grid container justifyContent="space-between">
               <h1>Список альбомов</h1>
               <Button onClick={() => router.push('/albums/create')}>
-                Загрузить
+                Создать альбом
               </Button>
             </Grid>
           </Box>

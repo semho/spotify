@@ -8,7 +8,7 @@ export interface IAlbumListProps {
   albums: IAlbum[];
 }
 
-export default function TrackList({ albums }: IAlbumListProps) {
+export default function AlbumList({ albums }: IAlbumListProps) {
   return (
     <Grid container direction="column">
       <Box p={2}>
