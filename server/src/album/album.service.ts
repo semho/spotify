@@ -93,4 +93,21 @@ export class AlbumService {
 
     return album;
   }
+
+  async untieAlbum(idAlbum: ObjectId, idTrack: ObjectId): Promise<Album> {
+    const album = await this.albumModel.findById(idAlbum);
+    const track = await this.trackModel.findById(idTrack);
+
+    album.tracks = album.tracks.filter(
+      (trackAlbum) => trackAlbum.toString() !== track._id.toString(),
+    );
+    track.albums = track.albums.filter(
+      (trackAlbum) => trackAlbum.toString() !== album.toString(),
+    );
+
+    await track.save();
+    await album.save();
+
+    return album;
+  }
 }

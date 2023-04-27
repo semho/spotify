@@ -65,4 +65,12 @@ export class AlbumController {
     const { idAlbum, idTracks } = dto;
     return this.albumService.attachAlbum(idAlbum, idTracks);
   }
+
+  @Get('/:idAlbum/:idTrack')
+  untieTracks(
+    @Param('idAlbum') idAlbum: ObjectId,
+    @Param('idTrack') idTrack: ObjectId,
+  ) {
+    return this.albumService.untieAlbum(idAlbum, idTrack);
+  }
 }

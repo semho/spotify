@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/store';
+import { removeTrackFromAlbum } from '@/store/api';
 import { setActiveState, setPlayState } from '@/store/playerSlice';
 import { deleteTrack } from '@/store/trackSlice';
 import { ITrack } from '@/types/track';
@@ -31,13 +32,20 @@ export default function TrackItem({ track, isAlbum = false }: ITrackItemProps) {
     dispatch(setPlayState());
   };
 
-  const deleteTrackById = (
+  const deleteTrackById = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.stopPropagation();
 
     if (isAlbum) {
-      console.log(router.query);
+      const idAlbum = router.query.id as string;
+      if (idAlbum) {
+        const response = await removeTrackFromAlbum(idAlbum, track._id);
+        if (!!response.data) {
+          //TODO: добавить в стор
+          window.location.reload();
+        }
+      }
     } else {
       dispatch(deleteTrack(track._id));
     }
