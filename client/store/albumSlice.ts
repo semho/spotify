@@ -31,6 +31,22 @@ export const getAlbums = createAsyncThunk(
   },
 );
 
+export const getAlbumFromStore = createAsyncThunk(
+  'album/getOneAlbum',
+  async (id: string, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await api.getAlbum(id);
+      if (!!response) {
+        dispatch(oneAlbum(response.data));
+      }
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue('Ошибка: ' + (error as Error).message);
+    }
+  },
+);
+
 export const createAlbum = createAsyncThunk(
   'album/createAlbums',
   async (data: FormData, { rejectWithValue, dispatch }) => {
@@ -79,6 +95,32 @@ export const deleteAlbum = createAsyncThunk(
     }
   },
 );
+/**
+ * отвязка трека от альбома
+ */
+export const deleteTrackFromAlbum = createAsyncThunk(
+  'album/deleteTrackFromAlbums',
+  async (
+    obj: { idAlbum: string; idTrack: string },
+    { rejectWithValue, dispatch },
+  ) => {
+    try {
+      const { idAlbum, idTrack } = obj;
+      const response = await api.removeTrackFromAlbum(idAlbum, idTrack);
+      if (!!response) {
+        dispatch(removeTrackFromAlbumStore({ idAlbum, idTrack }));
+        toast('Трек отвязван от альбома', { type: 'success' });
+      }
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(
+        'Ошибка отвязки трека: ' + (error as Error).message,
+      );
+    }
+  },
+);
 
 const setLoader = (state: IAlbumState) => {
   state.loading = true;
@@ -101,6 +143,27 @@ export const albumSlice = createSlice({
     },
     newAlbum: (state, action: PayloadAction<IAlbum>) => {
       state.albums.push(action.payload);
+    },
+    oneAlbum: (state, action: PayloadAction<IAlbum>) => {
+      const find = state.albums.find(
+        (album) => album._id == action.payload._id,
+      );
+      if (!find) {
+        state.albums.push(action.payload);
+      }
+    },
+    removeTrackFromAlbumStore: (state, action) => {
+      state.albums = state.albums.map((album) => {
+        if (album._id === action.payload.idAlbum) {
+          return {
+            ...album,
+            tracks: album.tracks.filter(
+              (track) => track._id !== action.payload.idTrack,
+            ),
+          };
+        }
+        return album;
+      });
     },
   },
   extraReducers: (builder) => {
@@ -144,7 +207,8 @@ export const albumSlice = createSlice({
   },
 });
 
-const { removeAlbum, newAlbum } = albumSlice.actions;
+const { removeAlbum, newAlbum, removeTrackFromAlbumStore, oneAlbum } =
+  albumSlice.actions;
 
 export const selectAlbumState = (state: AppState) => state.tracks;
 

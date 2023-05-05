@@ -2,10 +2,10 @@ import StepWrapper from '@/components/StepWrapper';
 import TrackList from '@/components/TrackList';
 import { useNotification } from '@/hooks/useNotification';
 import MainLayout from '@/layouts/MainLayout';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { attachTracksToAlbum, getAlbum } from '@/store/api';
+import { useAppSelector, wrapper } from '@/store';
+import { attachTracksToAlbum } from '@/store/api';
 import { getTracks } from '@/store/trackSlice';
-import { IServerAlbum } from '@/types/album';
+import { getAlbumFromStore } from '@/store/albumSlice';
 import {
   Avatar,
   Box,
@@ -23,6 +23,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import styles from '../../styles/TrackPage.module.scss';
+import { ITrack } from '@/types/track';
 
 interface listTrack {
   id: string;
@@ -31,8 +32,7 @@ interface listTrack {
   picture: string;
 }
 
-export default function TrackPage({ serverAlbum }: IServerAlbum) {
-  const [album, setAlbum] = useState(serverAlbum);
+export default function TrackPage() {
   const [trackList, setTrackList] = useState<listTrack[]>();
   const [loadingState, setLoadingState] = useState(true);
   const router = useRouter();
@@ -40,16 +40,26 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
   const baseUrl = publicRuntimeConfig.apiUrl;
   const [activeStep, setActiveStep] = useState(0);
   const { tracks } = useAppSelector((state) => state.tracks);
-  const dispatch = useAppDispatch();
 
-  const [attachTracks, setAttachTracks] = useState(album.tracks);
+  const { albums, loading } = useAppSelector((state) => state.albums);
+  const album = albums.find((album) => album._id === router.query.id);
+
+  if (!album) {
+    return (
+      <MainLayout>
+        <h1>Альбом не найден</h1>
+      </MainLayout>
+    );
+  }
+
+  const [attachTracks, setAttachTracks] = useState<ITrack[]>(album.tracks);
 
   const addTrack = async (
     e: React.MouseEvent<HTMLInputElement>,
     id: string,
   ) => {
     const foundTrack = tracks.filter((record) => record._id == id);
-    //добавляем трек в список, если его нет. убираем, если он уже есть
+    // добавляем трек в список, если его нет. убираем, если он уже есть
     if (
       attachTracks.filter((record) => record._id == foundTrack[0]._id).length >
       0
@@ -61,6 +71,14 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
       setAttachTracks([...attachTracks, ...foundTrack]);
     }
   };
+
+  if (!album) {
+    return (
+      <MainLayout>
+        <h1>Loading</h1>
+      </MainLayout>
+    );
+  }
 
   const back = () => {
     setActiveStep((prev) => prev - 1);
@@ -100,10 +118,9 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
 
   useEffect(() => {
     setLoadingState(false);
-    dispatch(getTracks());
-  }, [dispatch, loadingState]);
+  }, []);
 
-  if (loadingState) {
+  if (loadingState || loading) {
     return (
       <MainLayout>
         <h1>Loading</h1>
@@ -136,12 +153,12 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
           <Button onClick={back}>Назад</Button>
         </Hidden>
         <Hidden smUp={activeStep > 0}>
-          {album.tracks.length === 0 ? (
+          {album?.tracks.length === 0 ? (
             <h2>Треки не найдены</h2>
           ) : (
             <h2>Треки альбома</h2>
           )}
-          <TrackList tracks={album.tracks} isAlbum={true} />
+          <TrackList tracks={album?.tracks!} isAlbum={true} />
         </Hidden>
         <Button onClick={next}>
           {activeStep > 0 ? 'Закончить' : 'Привязать трек'}
@@ -193,12 +210,12 @@ export default function TrackPage({ serverAlbum }: IServerAlbum) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const response = await getAlbum(params?.id);
-
-  return {
-    props: {
-      serverAlbum: response.data,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps =
+  wrapper.getServerSideProps((store) => async ({ params }) => {
+    await store.dispatch(getAlbumFromStore(params?.id as string));
+    await store.dispatch(getTracks());
+    console.log('State on server', store.getState());
+    return {
+      props: {},
+    };
+  });

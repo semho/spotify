@@ -1,4 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/store';
+import { deleteTrackFromAlbum } from '@/store/albumSlice';
 import { removeTrackFromAlbum } from '@/store/api';
 import { setActiveState, setPlayState } from '@/store/playerSlice';
 import { deleteTrack } from '@/store/trackSlice';
@@ -39,13 +40,7 @@ export default function TrackItem({ track, isAlbum = false }: ITrackItemProps) {
 
     if (isAlbum) {
       const idAlbum = router.query.id as string;
-      if (idAlbum) {
-        const response = await removeTrackFromAlbum(idAlbum, track._id);
-        if (!!response.data) {
-          //TODO: добавить в стор
-          window.location.reload();
-        }
-      }
+      dispatch(deleteTrackFromAlbum({ idAlbum: idAlbum, idTrack: track._id }));
     } else {
       dispatch(deleteTrack(track._id));
     }
