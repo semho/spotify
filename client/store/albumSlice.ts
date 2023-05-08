@@ -122,6 +122,35 @@ export const deleteTrackFromAlbum = createAsyncThunk(
   },
 );
 
+/**
+ * привязка трека к альбому
+ */
+export const attachTrackFromAlbum = createAsyncThunk(
+  'album/attachTrackFromAlbums',
+  async (
+    obj: { idAlbum: string; idTracks: string[] },
+    { rejectWithValue, dispatch },
+  ) => {
+    try {
+      const { idAlbum, idTracks } = obj;
+      const response = await api.attachTracksToAlbum(idAlbum, idTracks);
+      if (!!response) {
+        const tracks = response.data.arrTracks;
+        console.log(tracks);
+        dispatch(addTracksFromAlbumStore({ idAlbum, tracks }));
+        toast('Треки привязаны к альбому', { type: 'success' });
+      }
+
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return rejectWithValue(
+        'Ошибка привязки трека: ' + (error as Error).message,
+      );
+    }
+  },
+);
+
 const setLoader = (state: IAlbumState) => {
   state.loading = true;
   state.error = '';
@@ -160,6 +189,17 @@ export const albumSlice = createSlice({
             tracks: album.tracks.filter(
               (track) => track._id !== action.payload.idTrack,
             ),
+          };
+        }
+        return album;
+      });
+    },
+    addTracksFromAlbumStore: (state, action) => {
+      state.albums = state.albums.map((album) => {
+        if (album._id === action.payload.idAlbum) {
+          return {
+            ...album,
+            tracks: action.payload.tracks,
           };
         }
         return album;
@@ -207,8 +247,13 @@ export const albumSlice = createSlice({
   },
 });
 
-const { removeAlbum, newAlbum, removeTrackFromAlbumStore, oneAlbum } =
-  albumSlice.actions;
+const {
+  removeAlbum,
+  newAlbum,
+  removeTrackFromAlbumStore,
+  oneAlbum,
+  addTracksFromAlbumStore,
+} = albumSlice.actions;
 
 export const selectAlbumState = (state: AppState) => state.tracks;
 

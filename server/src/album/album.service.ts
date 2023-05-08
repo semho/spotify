@@ -66,8 +66,12 @@ export class AlbumService {
    * @param idAlbum
    * @returns Promise<Album>
    */
-  async attachAlbum(idAlbum: ObjectId, idTracks: ObjectId[]): Promise<Album> {
+  async attachAlbum(
+    idAlbum: ObjectId,
+    idTracks: ObjectId[],
+  ): Promise<{ album: Album; arrTracks: Track[] }> {
     const album = await this.albumModel.findById(idAlbum);
+    const arrTracks = [];
 
     await Promise.all(
       idTracks.map(async (idTrack) => {
@@ -88,12 +92,19 @@ export class AlbumService {
       idTracks.map(async (idTrack) => {
         const track = await this.trackModel.findById(idTrack);
         await track.save();
+        arrTracks.push(track);
       }),
     );
 
-    return album;
+    return { album, arrTracks };
   }
 
+  /**
+   * Удаление связей
+   * @param idAlbum - id of album у кого удаляем связь
+   * @param idTrack - id трека, который удаляем из альбома
+   * @returns - альбом
+   */
   async untieAlbum(idAlbum: ObjectId, idTrack: ObjectId): Promise<Album> {
     const album = await this.albumModel.findById(idAlbum);
     const track = await this.trackModel.findById(idTrack);

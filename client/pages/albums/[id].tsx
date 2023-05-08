@@ -2,10 +2,9 @@ import StepWrapper from '@/components/StepWrapper';
 import TrackList from '@/components/TrackList';
 import { useNotification } from '@/hooks/useNotification';
 import MainLayout from '@/layouts/MainLayout';
-import { useAppSelector, wrapper } from '@/store';
-import { attachTracksToAlbum } from '@/store/api';
+import { useAppDispatch, useAppSelector, wrapper } from '@/store';
 import { getTracks } from '@/store/trackSlice';
-import { getAlbumFromStore } from '@/store/albumSlice';
+import { attachTrackFromAlbum, getAlbumFromStore } from '@/store/albumSlice';
 import {
   Avatar,
   Box,
@@ -43,6 +42,7 @@ export default function TrackPage() {
 
   const { albums, loading } = useAppSelector((state) => state.albums);
   const album = albums.find((album) => album._id === router.query.id);
+  const dispatch = useAppDispatch();
 
   if (!album) {
     return (
@@ -105,11 +105,9 @@ export default function TrackPage() {
       });
       //TODO: делаем запроc на привязку id треков к альбому
       try {
-        const response = await attachTracksToAlbum(album._id, idTracks);
-        if (!!response.data) {
-          //TODO: можно переделать на setActiveStep(0); тогда не будет перезагрузки станицы, но тогда надо будет сохранять данные в стор и из них подтягивать треки альбома
-          window.location.reload();
-        }
+        const idAlbum = album._id as string;
+        dispatch(attachTrackFromAlbum({ idAlbum, idTracks }));
+        setActiveStep(0);
       } catch (error) {
         useNotification((error as Error).message, 'error');
       }
