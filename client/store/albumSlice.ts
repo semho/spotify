@@ -136,7 +136,6 @@ export const attachTrackFromAlbum = createAsyncThunk(
       const response = await api.attachTracksToAlbum(idAlbum, idTracks);
       if (!!response) {
         const tracks = response.data.arrTracks;
-        console.log(tracks);
         dispatch(addTracksFromAlbumStore({ idAlbum, tracks }));
         toast('Треки привязаны к альбому', { type: 'success' });
       }

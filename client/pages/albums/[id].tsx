@@ -20,9 +20,10 @@ import { GetServerSideProps } from 'next';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styles from '../../styles/TrackPage.module.scss';
 import { ITrack } from '@/types/track';
+import { IAlbum } from '@/types/album';
 
 interface listTrack {
   id: string;
@@ -53,6 +54,32 @@ export default function TrackPage() {
   }
 
   const [attachTracks, setAttachTracks] = useState<ITrack[]>(album.tracks);
+
+  const isStringOrObject = useCallback(() => {
+    /**
+     * Определяем не массив ли строк tracks у альбома вместо массива объектов.
+     * Если да, то соотносим его со всеми треками и отображаем привязанные
+     *
+     * @returns
+     */
+    const filterTracks = () => {
+      if (album && typeof album.tracks[0] === 'string') {
+        const albumTracks = album.tracks as unknown as string[];
+        return tracks.filter((track) => {
+          const id = track._id as string;
+          return albumTracks.includes(id);
+        });
+      }
+    };
+
+    return filterTracks() ?? album.tracks;
+  }, [album, tracks]);
+
+  const [tracksAlbum, setTracksAlbum] = useState<ITrack[]>(isStringOrObject());
+
+  useEffect(() => {
+    setTracksAlbum(isStringOrObject);
+  }, [isStringOrObject]);
 
   const addTrack = async (
     e: React.MouseEvent<HTMLInputElement>,
@@ -116,7 +143,8 @@ export default function TrackPage() {
 
   useEffect(() => {
     setLoadingState(false);
-  }, []);
+    dispatch(getTracks());
+  }, [dispatch]);
 
   if (loadingState || loading) {
     return (
@@ -151,12 +179,12 @@ export default function TrackPage() {
           <Button onClick={back}>Назад</Button>
         </Hidden>
         <Hidden smUp={activeStep > 0}>
-          {album?.tracks.length === 0 ? (
+          {album.tracks.length === 0 ? (
             <h2>Треки не найдены</h2>
           ) : (
             <h2>Треки альбома</h2>
           )}
-          <TrackList tracks={album?.tracks!} isAlbum={true} />
+          <TrackList tracks={tracksAlbum} isAlbum={true} />
         </Hidden>
         <Button onClick={next}>
           {activeStep > 0 ? 'Закончить' : 'Привязать трек'}
