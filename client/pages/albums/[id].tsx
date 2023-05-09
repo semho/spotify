@@ -1,18 +1,18 @@
 import { GetServerSideProps } from 'next';
-import { attachTrackToAlbum, getAlbum, getTrack } from '@/store/api';
+import { getAlbum } from '@/store/api';
 import { IServerAlbum } from '@/types/album';
 import { useEffect, useState } from 'react';
 import MainLayout from '@/layouts/MainLayout';
-import { Button, Divider, Grid } from '@mui/material';
+import { Button, Divider, Grid, Collapse, Box } from '@mui/material';
 import styles from '../../styles/TrackPage.module.scss';
 import { useRouter } from 'next/router';
 import getConfig from 'next/config';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { getTracks } from '@/store/trackSlice';
-import { useNotification } from '@/hooks/useNotification';
 import TrackList from '@/components/TrackList';
 import { ITrack } from '@/types/track';
+import TrackListForAlbum from '@/components/TrackListForAlbum';
 
 export default function AlbumPage({ serverAlbum }: IServerAlbum) {
   const [album, setAlbum] = useState(serverAlbum);
@@ -22,6 +22,7 @@ export default function AlbumPage({ serverAlbum }: IServerAlbum) {
   const baseUrl = publicRuntimeConfig.apiUrl;
   const { tracks } = useAppSelector((state) => state.tracks);
   const dispatch = useAppDispatch();
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     setLoadingState(false);
@@ -36,39 +37,20 @@ export default function AlbumPage({ serverAlbum }: IServerAlbum) {
     );
   }
 
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
+  /**
+   * функция для обновления состояния стейта привязанных треков к альбому
+   * ее прокидываем в дочерние компоненты для возможности отвязки/привязки трека от/к альбома
+   * @param updatedTracks
+   */
   const updateAlbumTracks = (updatedTracks: ITrack[]) => {
     setAlbum({
       ...album,
       tracks: updatedTracks,
     });
-  };
-
-  /**
-   * Привязываем трек к альбому
-   *
-   * @param id -id текущего трека
-   * @returns
-   */
-  const addTrack = async (id: string) => {
-    try {
-      const response = await attachTrackToAlbum({
-        idAlbum: router.query.id,
-        idTrack: id,
-      });
-
-      if (response.data == '') {
-        useNotification('Этот трек уже привязан', 'warning');
-        return;
-      }
-
-      updateAlbumTracks(
-        album.tracks ? [...album.tracks, response.data] : [response.data],
-      );
-
-      useNotification('Трек привязан', 'success');
-    } catch (error) {
-      useNotification((error as Error).message, 'error');
-    }
   };
 
   return (
@@ -102,23 +84,27 @@ export default function AlbumPage({ serverAlbum }: IServerAlbum) {
           updateAlbumTracks={updateAlbumTracks}
         />
       </Grid>
-      <h4>Все треки</h4>
       <Divider flexItem className={styles.devider} />
-      <div>
-        {tracks?.map((track) => (
-          <div key={track._id}>
-            <span>Артист - {track.artist}</span>{' '}
-            <span>Название - {track.name}</span>
-            <Button
-              variant={'contained'}
-              className={styles.button}
-              onClick={() => addTrack(track._id)}
-            >
-              Привязать
-            </Button>
-          </div>
-        ))}
-      </div>
+      <h4>Треки для добавления в альбом</h4>
+      <Box textAlign="center" sx={{ marginBottom: '20px' }}>
+        <Button onClick={handleExpandClick} variant={'outlined'}>
+          Показать/скрыть
+        </Button>
+      </Box>
+      <Divider flexItem className={styles.devider} />
+      <Collapse in={expanded} timeout="auto" unmountOnExit>
+        <Grid container justifyContent="space-between">
+          {tracks?.length === 0 ? (
+            <h4>Треки не найдены</h4>
+          ) : (
+            <TrackListForAlbum
+              tracks={tracks}
+              updateAlbumTracks={updateAlbumTracks}
+              albumTracks={album.tracks}
+            />
+          )}
+        </Grid>
+      </Collapse>
     </MainLayout>
   );
 }

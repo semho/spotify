@@ -1,6 +1,5 @@
 import { useNotification } from '@/hooks/useNotification';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { deleteTrackFromAlbum } from '@/store/albumSlice';
 import { removeTrackFromAlbum } from '@/store/api';
 import { setActiveState, setPlayState } from '@/store/playerSlice';
 import { deleteTrack } from '@/store/trackSlice';
@@ -38,7 +37,7 @@ export default function TrackItem({ track, onDeleteTrack }: ITrackItemProps) {
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     e.stopPropagation();
-
+    //отвязка трека от альбома
     if (onDeleteTrack) {
       try {
         const response = await removeTrackFromAlbum(
@@ -53,6 +52,7 @@ export default function TrackItem({ track, onDeleteTrack }: ITrackItemProps) {
         useNotification((error as Error).message, 'error');
       }
       onDeleteTrack(track);
+      //удаление трека из БД
     } else {
       dispatch(deleteTrack(track._id));
     }
