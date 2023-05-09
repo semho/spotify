@@ -7,11 +7,13 @@ import TrackItem from './TrackItem';
 export interface ITrackListProps {
   tracks: ITrack[];
   updateAlbumTracks?: (updatedTracks: ITrack[]) => void;
+  isAlbum?: boolean;
 }
 
 export default function TrackList({
   tracks,
   updateAlbumTracks,
+  isAlbum = false,
 }: ITrackListProps) {
   const handleDeleteTrack = (track: ITrack) => {
     if (!updateAlbumTracks) return;
@@ -26,6 +28,7 @@ export default function TrackList({
           <TrackItem
             key={track._id}
             track={track}
+            isAlbum={isAlbum}
             onDeleteTrack={handleDeleteTrack}
           />
         ))}

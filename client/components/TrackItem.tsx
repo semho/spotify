@@ -16,9 +16,14 @@ import styles from '../styles/TrackItem.module.scss';
 interface ITrackItemProps {
   track: ITrack;
   onDeleteTrack?: (track: ITrack) => void;
+  isAlbum?: boolean;
 }
 
-export default function TrackItem({ track, onDeleteTrack }: ITrackItemProps) {
+export default function TrackItem({
+  track,
+  onDeleteTrack,
+  isAlbum,
+}: ITrackItemProps) {
   const { publicRuntimeConfig } = getConfig();
   const baseUrl = publicRuntimeConfig.apiUrl;
 
@@ -38,7 +43,7 @@ export default function TrackItem({ track, onDeleteTrack }: ITrackItemProps) {
   ) => {
     e.stopPropagation();
     //отвязка трека от альбома
-    if (onDeleteTrack) {
+    if (isAlbum && onDeleteTrack) {
       try {
         const response = await removeTrackFromAlbum(
           router.query.id as string,

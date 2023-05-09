@@ -13,6 +13,7 @@ import { getTracks } from '@/store/trackSlice';
 import TrackList from '@/components/TrackList';
 import { ITrack } from '@/types/track';
 import TrackListForAlbum from '@/components/TrackListForAlbum';
+import Search from '@/components/Search';
 
 export default function AlbumPage({ serverAlbum }: IServerAlbum) {
   const [album, setAlbum] = useState(serverAlbum);
@@ -82,6 +83,7 @@ export default function AlbumPage({ serverAlbum }: IServerAlbum) {
         <TrackList
           tracks={album.tracks}
           updateAlbumTracks={updateAlbumTracks}
+          isAlbum={true}
         />
       </Grid>
       <Divider flexItem className={styles.devider} />
@@ -94,6 +96,7 @@ export default function AlbumPage({ serverAlbum }: IServerAlbum) {
       <Divider flexItem className={styles.devider} />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <Grid container justifyContent="space-between">
+          <Search />
           {tracks?.length === 0 ? (
             <h4>Треки не найдены</h4>
           ) : (
