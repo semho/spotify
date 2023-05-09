@@ -6,18 +6,28 @@ import TrackItem from './TrackItem';
 
 export interface ITrackListProps {
   tracks: ITrack[];
-  isAlbum?: boolean;
+  updateAlbumTracks?: (updatedTracks: ITrack[]) => void;
 }
 
 export default function TrackList({
   tracks,
-  isAlbum = false,
+  updateAlbumTracks,
 }: ITrackListProps) {
+  const handleDeleteTrack = (track: ITrack) => {
+    if (!updateAlbumTracks) return;
+    const updatedTracks = tracks.filter((t) => t._id !== track._id);
+    updateAlbumTracks(updatedTracks);
+  };
+
   return (
     <Grid container direction="column">
       <Box p={2}>
         {tracks.map((track) => (
-          <TrackItem key={track._id} track={track} isAlbum={isAlbum} />
+          <TrackItem
+            key={track._id}
+            track={track}
+            onDeleteTrack={handleDeleteTrack}
+          />
         ))}
       </Box>
     </Grid>

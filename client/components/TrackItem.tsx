@@ -1,3 +1,4 @@
+import { useNotification } from '@/hooks/useNotification';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { deleteTrackFromAlbum } from '@/store/albumSlice';
 import { removeTrackFromAlbum } from '@/store/api';
@@ -15,10 +16,10 @@ import styles from '../styles/TrackItem.module.scss';
 
 interface ITrackItemProps {
   track: ITrack;
-  isAlbum?: boolean;
+  onDeleteTrack?: (track: ITrack) => void;
 }
 
-export default function TrackItem({ track, isAlbum = false }: ITrackItemProps) {
+export default function TrackItem({ track, onDeleteTrack }: ITrackItemProps) {
   const { publicRuntimeConfig } = getConfig();
   const baseUrl = publicRuntimeConfig.apiUrl;
 
@@ -38,9 +39,20 @@ export default function TrackItem({ track, isAlbum = false }: ITrackItemProps) {
   ) => {
     e.stopPropagation();
 
-    if (isAlbum) {
-      const idAlbum = router.query.id as string;
-      dispatch(deleteTrackFromAlbum({ idAlbum: idAlbum, idTrack: track._id }));
+    if (onDeleteTrack) {
+      try {
+        const response = await removeTrackFromAlbum(
+          router.query.id as string,
+          track._id,
+        );
+
+        if (!!response.data) {
+          useNotification('Трек отвязан', 'success');
+        }
+      } catch (error) {
+        useNotification((error as Error).message, 'error');
+      }
+      onDeleteTrack(track);
     } else {
       dispatch(deleteTrack(track._id));
     }

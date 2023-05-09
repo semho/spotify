@@ -8,6 +8,7 @@ import { Model, ObjectId, Types } from 'mongoose';
 import { FileService, FileType } from 'src/file/file.service';
 import { CreateTrackDto } from 'src/track/dto/create-track.dto';
 import { Track, TrackDocument } from 'src/track/schemas/track.schema';
+import { AttachTrackDto } from './dto/attach-track.dto';
 import { CreateAlbumDto } from './dto/create-album.dto';
 import { Album, AlbumDocument } from './schemas/album.schema';
 
@@ -97,6 +98,40 @@ export class AlbumService {
     );
 
     return { album, arrTracks };
+  }
+
+  /**
+   * Привязка одного трека к альбому
+   *
+   * @param {idAlbum: ObjectId, idTrack: ObjectId}
+   * @returns Promise<Track>
+   */
+  async attachOneTrackToAlbum({
+    idAlbum,
+    idTrack,
+  }: AttachTrackDto): Promise<Track | never> {
+    const album = await this.albumModel.findById(idAlbum);
+    const track = await this.trackModel.findById(idTrack);
+
+    let coincidence = true;
+
+    if (!album.tracks.includes(track.id)) {
+      album.tracks.push(track);
+      coincidence = false;
+    }
+
+    if (!track.albums.includes(album.id)) {
+      track.albums.push(album);
+    }
+
+    await album.save();
+    await track.save();
+
+    if (coincidence) {
+      return;
+    }
+
+    return track;
   }
 
   /**
